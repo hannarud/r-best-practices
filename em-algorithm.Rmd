@@ -1,0 +1,127 @@
+---
+title: "EM-algorithm Tutorial"
+author: "hannarud"
+date: "May 4, 2016"
+output: html_document
+---
+
+## Example 1
+
+Given by Dempster, Laird, and Rubin (1977).
+
+Consider the multinomial distribution with four outcomes, that is, the multinomial with probability function,
+
+$$p(x_1, x_2, x_3, x_4) = \frac{n!}{x_1!x_2!x_3!x_4!} \pi_{1}^{x_{1}}\pi_{2}^{x_{2}}\pi_{3}^{x_{3}}\pi_{4}^{x_{4}},$$
+
+with $n = x_1 + x_2 + x_3 + x_4$ and $1 = \pi_1 + \pi_2 + \pi_3 + \pi_4$.
+
+Suppose the probabilities are related by a single parameter, $\theta$:
+
+$$ \pi_1 = \frac{1}{2} + \frac{1}{4}\theta, $$
+$$ \pi_2 = \frac{1}{4} - \frac{1}{4}\theta, $$
+$$ \pi_3 = \frac{1}{4} - \frac{1}{4}\theta, $$
+$$ \pi_4 = \frac{1}{4}\theta, $$
+
+where $0 \le \theta \le 1$.
+
+This model goes back to an example discussed by Fisher, 1925, in "Statistical Methods for Research Workers".
+
+Given an observation $(x_1, x_2, x_3, x_4)$, the log-likelihood function is
+
+$$l(\theta) = x_1 \log(2+\theta) + (x_2+x_3) \log(1−\theta) + x4 \log(\theta)+ constant.$$
+
+Our objective is to estimate $\theta$.
+
+The derivative of the log-likelihood function is
+
+$$\frac{\d l(\theta)}{\d \theta} = \frac{x_1}{2+\theta} - \frac{x_2+x_3}{1-\theta} + \frac{x_4}{\theta}.$$
+
+To use the EM algorithm on this problem, we can think of a multinomial with five classes, which is formed from the original multinomial by splitting the first class into two with associated probabilities $\frac{1}/{2}$ and $\frac{\theta}{4}$.
+
+So we came to a model:
+
+$z_{11}$    | $z_{12}$ | $z_{2}$ | $z_{3}$ | $z_{4}$
+------------- | -------------
+$\frac{1}{2}$  | $\frac{\theta}{4}$ | $\frac{1}{4} (1-\theta)$ | $\frac{1}{4} (1-\theta)$ | $\frac{\theta}{4}$
+Content Cell  | Content Cell
+
+The original variable x1 is now the sum of u1 and u2.
+Under this reformulation, we now have a maximum likelihood
+estimate of θ by considering u2 + x4 (or x2 + x3) to be a
+realization of a binomial with n = u2 + x4 + x2 + x3 and
+π = θ (or 1 − θ).
+However, we do not know u2 (or u1). Proceeding as if we had
+a five-outcome multinomial observation with two missing
+elements, we have the log-likelihood for the complete data,
+lc(θ)=(u2 + x4) log(θ)+(x2 + x3) log(1 − θ) + constant,
+and the maximum likelihood estimate for θ is
+u2 + x4
+u2 + x2 + x3 + x4
+
+The E-step of the iterative EM algorithm fills in the missing or
+unobservable value with its expected value given a current
+value of the parameter, θ(k)
+, and the observed data.
+This is a binomial random variable as part of x1. So with
+θ = θ(k)
+,
+Eθ(k)(u2) = 1
+4
+x1θ(k) /
+
+
+1
+2 +
+1
+4
+θ(k)
+
+
+= u(k)
+2 .
+We now maximize Eθ(k) (lc(θ)).
+Because lc(θ) is linear in the data, we have
+E (lc(θ)) = E(u2 + x4) log(θ) + E(x2 + x3) log(1 − θ).
+This maximum occurs at
+θ(k+1) = (u(k)
+2 + x4)/(u(k)
+2 + x2 + x3 + x4).
+The following Matlab statements execute a single iteration.
+function [u2kp1,tkp1] = em(tk,x)
+u2kp1 = x(1)*tk/(2+tk);
+tkp1 = (u2kp1 + x(4))/(sum(x)-x(1)+u2kp1);
+
+
+
+
+
+
+
+```{r}
+set.seed(123) # Fix randoms at the same point
+```
+
+```{r}
+trueMean <- 10  ## suppose this true mean is unknown
+
+n <- 20
+x <- rnorm(n, mean = trueMean)  ## sample data from a Normal distribution
+print(x)
+```
+
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
