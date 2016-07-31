@@ -34,34 +34,36 @@ Our objective is to estimate $\theta$.
 
 The derivative of the log-likelihood function is
 
-$$\frac{\d l(\theta)}{\d \theta} = \frac{x_1}{2+\theta} - \frac{x_2+x_3}{1-\theta} + \frac{x_4}{\theta}.$$
+$$\frac{d l(\theta)}{d \theta} = \frac{x_1}{2+\theta} - \frac{x_2+x_3}{1-\theta} + \frac{x_4}{\theta}.$$
 
-To use the EM algorithm on this problem, we can think of a multinomial with five classes, which is formed from the original multinomial by splitting the first class into two with associated probabilities $\frac{1}/{2}$ and $\frac{\theta}{4}$.
+To use the EM algorithm on this problem, we can think of a multinomial with five classes, which is formed from the original multinomial by splitting the first class into two with associated probabilities $\frac{1}{2}$ and $\frac{\theta}{4}$.
 
 So we came to a model:
 
-$z_{11}$    | $z_{12}$ | $z_{2}$ | $z_{3}$ | $z_{4}$
-------------- | -------------
-$\frac{1}{2}$  | $\frac{\theta}{4}$ | $\frac{1}{4} (1-\theta)$ | $\frac{1}{4} (1-\theta)$ | $\frac{\theta}{4}$
-Content Cell  | Content Cell
+$z_{11}$      | $z_{12}$           | $z_{2}$                  | $z_{3}$                  | $z_{4}$           
+------------- | ------------------ | ------------------------ | ------------------------ | ------------------
+$\frac{1}{2}$ | $\frac{\theta}{4}$ | $\frac{1}{4} (1-\theta)$ | $\frac{1}{4} (1-\theta)$ | $\frac{\theta}{4}$
 
-The original variable x1 is now the sum of u1 and u2.
-Under this reformulation, we now have a maximum likelihood
-estimate of θ by considering u2 + x4 (or x2 + x3) to be a
-realization of a binomial with n = u2 + x4 + x2 + x3 and
-π = θ (or 1 − θ).
-However, we do not know u2 (or u1). Proceeding as if we had
-a five-outcome multinomial observation with two missing
-elements, we have the log-likelihood for the complete data,
-lc(θ)=(u2 + x4) log(θ)+(x2 + x3) log(1 − θ) + constant,
-and the maximum likelihood estimate for θ is
-u2 + x4
-u2 + x2 + x3 + x4
+Assume we had the following number of observations of each variable:
 
-The E-step of the iterative EM algorithm fills in the missing or
-unobservable value with its expected value given a current
-value of the parameter, θ(k)
-, and the observed data.
+$y_1$ | $y_2$ | $y_3$ | $y_4$
+----- | ----- | ----- | -----
+$\frac{1}{2}$ + $\frac{1}{4} \theta$ | $\frac{1}{4} (1-\theta)$ | $\frac{1}{4} (1-\theta)$ | $\frac{\theta}{4}$
+125   | 18    | 20    | 34   
+
+$y_1$ here is a sum of $z_{11}$ and $z_{12}$.
+
+Now $z_{12}+z_{4}$ or $z_{2}+z_{3}$ can be considered as a realization of binomial random value with $n = z_{12} + z_{2} + z_{3} + z_{4}$ and $\pi = \theta$ (or $\pi = 1-\theta$).
+
+We do not know $z_{11}$ or $z_{12}$. Proceeding as if we had a five-outcome multinomial observation with two missing elements, we have the log-likelihood for the complete data,
+
+$$l_{c}(\theta) = (z_{12}+x_4) \log\theta + (x_2 + x_3) \log(1 − \theta) + constant.$$
+
+The maximum likelihood estimate for $\theta$ here is
+
+$$\hat{\theta} = \frac{z_{12}+x_4}{z_{12}+x_2+x_3+x_4}.$$
+
+The E-step of the iterative EM algorithm fills in the missing or unobservable value $z_{12}$ with its expected value using a current value of the parameter, $\theta^{(k)}$, and the observed data ($x_2$, $x_3$, $x_4$).
 This is a binomial random variable as part of x1. So with
 θ = θ(k)
 ,
