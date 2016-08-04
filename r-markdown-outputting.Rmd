@@ -1,0 +1,23 @@
+---
+title: "RMarkdown output example"
+author: "hannarud"
+date: "16 июня 2016 г."
+output: html_document
+---
+
+```{r}
+library(xtable)
+```
+
+
+```{r, results='asis'}
+print(xtable(summary(cars)), type = "html")
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
