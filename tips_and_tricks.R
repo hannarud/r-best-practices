@@ -25,6 +25,11 @@ rm(head_df)
 # Reorder columns of a data frame - just select them by names in the necessary order
 reordered_df <- df[, c("col3", "col1", "col2")]
 
+# Send email from R with on line of code
+# Rscript -e 'sendmailR::sendmail("<hanna.rudakouskaya@gmail.com>", "<hanna.rudakouskaya@gmail.com>", "Test", list(body = sendmailR::mime_part("test!")), control=list(smtpServer="ASPMX.L.GOOGLE.COM", smtpPort="25"))'
+
+# Working with dates
+format(as.POSIXct("07:05:45PM", format="%I:%M:%S%p"), "%H:%M:%S")
 
 # Complete cleanup (remove all the variables in workspace)
 rm(list=ls(all=TRUE))
