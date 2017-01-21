@@ -31,5 +31,26 @@ reordered_df <- df[, c("col3", "col1", "col2")]
 # Working with dates
 format(as.POSIXct("07:05:45PM", format="%I:%M:%S%p"), "%H:%M:%S")
 
+
+# Load all data from files using directory specified
+project_directory <- "set/some/directory/"
+
+require(stringr)
+
+# Read all files from directory
+filenames <- list.files(path = paste0(project_directory, "subfolder/csvs/"), pattern=".*_catalog\\.csv")
+
+# Create list of data frame names without the ".csv" part 
+names <- str_extract(filenames, "[-_a-z]+")
+
+# Load all files
+for(i in names){
+  filepath <- file.path(paste0(project_directory, "subfolder/csvs/", i, ".csv"))
+  print(filepath)
+  assign(i, read.csv(file = filepath, header = TRUE, sep = ",", quote = '"', stringsAsFactors = FALSE))
+}
+
+
+
 # Complete cleanup (remove all the variables in workspace)
 rm(list=ls(all=TRUE))
