@@ -3,16 +3,16 @@ library(googlesheets)
 
 # which google sheets do you have access to?
 # may ask you to authenticate in a browser!
-gs_ls()
+my_sheets <- gs_ls()
 
 # get the Britain Elects google sheet
-be <- gs_title("Britain Elects / Public Opinion")
+be <- gs_title("Youth and Juniors database")
 
 # list worksheets
 gs_ws_ls(be)
 
 # get Westminster voting
-west <- gs_read(ss=be, ws = "Westminster voting intentions", skip=1)
+west <- gs_read(ss=be, ws = "2017")
 
 # convert to data.frame
 wdf <- as.data.frame(west)
